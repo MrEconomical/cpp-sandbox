@@ -25,6 +25,10 @@ public:
     }
 
     bool insert(T val) {
+        if (!root) {
+            root = new TreeNode{val, nullptr, nullptr};
+            return true;
+        }
         return tree_insert(root, val);
     }
 
@@ -41,7 +45,20 @@ private:
     }
 
     bool tree_insert(TreeNode<T>* node, T val) {
-
+        if (val > node->val) {
+            if (!node->right) {
+                node->right = new TreeNode{val, nullptr, nullptr};
+                return true;
+            }
+            return tree_insert(node->right, val);
+        } else if (val < node->val) {
+            if (!node->left) {
+                node->left = new TreeNode{val, nullptr, nullptr};
+                return true;
+            }
+            return tree_insert(node->left, val);
+        }
+        return false;
     }
 
     bool tree_remove(TreeNode<T>* node, T val) {

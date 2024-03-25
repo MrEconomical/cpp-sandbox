@@ -55,7 +55,15 @@ public:
             throw std::exception("index out of bounds");
         }
 
-        if (index > 0) {
+        if (index == 0) {
+            // Remove head node
+            ListNode<T>* next = head->next;
+            delete head;
+            head = next;
+            if (length == 1) {
+                tail = nullptr;
+            }
+        } else {
             // Traverse list to node before removal index
             ListNode<T>* prev = head;
             for (size_t n = 0; n < index - 1; n ++) {
@@ -72,14 +80,6 @@ public:
                 delete prev->next;
                 prev->next = nullptr;
                 tail = prev;
-            }
-        } else {
-            // Remove head node
-            ListNode<T>* next = head->next;
-            delete head;
-            head = next;
-            if (length == 1) {
-                tail = nullptr;
             }
         }
 

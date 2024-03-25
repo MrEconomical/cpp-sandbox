@@ -60,6 +60,8 @@ public:
         if (index > length) {
             throw std::exception("index out of bounds");
         }
+
+        // Add node at start or end
         if (index == 0) {
             push_front(val);
             return;
@@ -68,7 +70,17 @@ public:
             return;
         }
 
-        // TODO: implement middle insert
+        // Traverse list to node before insertion index
+        ListNode<T>* prev = head;
+        for (size_t n = 0; n < index - 1; n ++) {
+            prev = prev->next;
+        }
+
+        // Add middle node
+        ListNode<T>* next = prev->next;
+        ListNode<T>* node = new ListNode<T>{val, next, prev};
+        prev->next = node;
+        next->prev = node;
 
         length ++;
     }
@@ -79,16 +91,36 @@ public:
         }
     }
 
-    friend void doubly_linked_list();
+    template<typename U>
+    friend void check_link_consistency(const DoublyLinkedList<U>& list);
+    friend void test_doubly_linked_list();
 };
 
 template<typename T>
 void check_link_consistency(const DoublyLinkedList<T>& list) {
+    if (list.len() == 0) {
+        assert(list.head == nullptr && list.tail == nullptr);
+    } else if (list.len() == 1) {
+        assert(list.head == list.tail);
+        assert(list.head->prev == nullptr && list.head->next == nullptr);
+    } else {
+        assert(list.head != list.tail);
+        assert(list.head->prev == nullptr && list.tail->next == nullptr);
 
+        ListNode<T>* prev = list.head;
+        ListNode<T>* current = list.head->next;
+        while (current) {
+            assert(current->prev == prev);
+            prev = current;
+            current = current->next;
+        }
+    }
 }
 
 void test_doubly_linked_list() {
-
+    DoublyLinkedList<int> list;
+    assert(list.len() == 0);
+    check_link_consistency(list);
 }
 
 int main() {

@@ -33,7 +33,10 @@ public:
     }
 
     bool remove(T val) {
-        return tree_remove(root, val);
+        if (!root) {
+            return false;
+        }
+        return tree_remove(&root, val);
     }
 
 private:
@@ -61,8 +64,47 @@ private:
         return false;
     }
 
-    bool tree_remove(TreeNode<T>* node, T val) {
+    bool tree_remove(TreeNode<T>*& node, T val) {
+        // Check left and right subtrees for value
+        if (val > node->val) {
+            if (!node->right) {
+                return false;
+            }
+            return tree_remove(node->right, val);
+        } else if (val < node->val) {
+            if (!node->left) {
+                return false;
+            }
+            return tree_remove(node->left, val);
+        }
 
+        // Replace node with left subtree or right subtree
+        if (!node->right) {
+            TreeNode<T>* next = node->left;
+            delete node;
+            node = next;
+            return true;
+        } else if (!node->right->left) {
+            TreeNode<T>* next = node->right;
+            next->left = node->left;
+            delete node;
+            node = next;
+            return true;
+        }
+
+        // Extract leftmost node in right subtree
+        TreeNode<T>* parent = node->right;
+        while (parent->left->left) {
+            parent = parent->left;
+        }
+        TreeNode<T>* next = parent->left;
+        parent->left = parent->left->right;
+
+        // Replace node with extracted node
+        next->left = node->left;
+        next->right = node->right;
+        delete node;
+        node = next;
     }
 
     friend void test_binary_tree();

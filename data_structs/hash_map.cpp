@@ -67,6 +67,17 @@ public:
         } else {
             item->val = val;
         }
+        map_size ++;
+    }
+
+    void remove(const K& key) {
+        size_t bucket = hasher(key) % num_buckets;
+        size_t removed = buckets[bucket].remove_if(
+            [&key](const Item<K, V>& item) {
+                return item.key == key;
+            }
+        );
+        map_size -= removed;
     }
 
 private:
@@ -101,10 +112,10 @@ void test_hash_map() {
         assert(map.num_buckets == DEFAULT_BUCKETS);
     }
     {
-        HashMap<int, int> map(100);
+        HashMap<int, int> map(4);
         assert(map.len() == 0);
         assert(map.buckets != nullptr);
-        assert(map.num_buckets == 100);
+        assert(map.num_buckets == 4);
     }
 }
 

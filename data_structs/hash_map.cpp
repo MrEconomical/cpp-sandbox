@@ -64,20 +64,22 @@ public:
         auto item = find_item(buckets[bucket], key);
         if (item == buckets[bucket].end()) {
             buckets[bucket].push_front(Item<K, V>{key, val});
+            map_size ++;
         } else {
             item->val = val;
         }
-        map_size ++;
     }
 
     void remove(const K& key) {
         size_t bucket = hasher(key) % num_buckets;
-        size_t removed = buckets[bucket].remove_if(
+        if (find_item_const(buckets[bucket], key) != buckets[bucket].cend()) {
+            map_size --;
+        }
+        buckets[bucket].remove_if(
             [&key](const Item<K, V>& item) {
                 return item.key == key;
             }
         );
-        map_size -= removed;
     }
 
 private:
@@ -108,14 +110,56 @@ void test_hash_map() {
     {
         HashMap<int, int> map;
         assert(map.len() == 0);
+        assert(!map.contains(3) && !map.contains(16) && !map.contains(-6) && !map.contains(1));
         assert(map.buckets != nullptr);
         assert(map.num_buckets == DEFAULT_BUCKETS);
+
+        map.insert(3, 8);
+        assert(map.len() == 1);
+        assert(map.contains(3) && !map.contains(15) && !map.contains(-6) && !map.contains(1));
+        assert(map.get(3) == 8);
+
+        map.insert(15, 2);
+        map.insert(-6, 40);
+        assert(map.len() == 3);
+        assert(map.contains(3) && map.contains(15) && map.contains(-6) && !map.contains(1));
+        assert(map.get(3) == 8 && map.get(15) == 2 && map.get(-6) == 40);
+
+        map.insert(-6, 10);
+        assert(map.len() == 3);
+        assert(map.contains(3) && map.contains(15) && map.contains(-6) && !map.contains(1));
+        assert(map.get(3) == 8 && map.get(15) == 2 && map.get(-6) == 10);
+
+        map.remove(15);
+        assert(map.len() == 2);
+        assert(map.contains(3) && !map.contains(15) && map.contains(-6) && !map.contains(1));
+        assert(map.get(3) == 8 && map.get(-6) == 10);
+
+        map.remove(15);
+        assert(map.len() == 2);
+        assert(map.contains(3) && !map.contains(15) && map.contains(-6) && !map.contains(1));
+        assert(map.get(3) == 8 && map.get(-6) == 10);
+
+        map.remove(3);
+        map.remove(-6);
+        assert(map.len() == 0);
+        assert(!map.contains(3) && !map.contains(16) && !map.contains(-6) && !map.contains(1));
     }
     {
         HashMap<int, int> map(4);
         assert(map.len() == 0);
         assert(map.buckets != nullptr);
         assert(map.num_buckets == 4);
+
+        map.insert(1, 7);
+        map.insert(2, 9);
+        map.insert(3, 7);
+        map.insert(4, 3);
+        map.insert(5, 4);
+        assert(map.len() == 5);
+        assert(map.contains(1) && map.contains(2) && map.contains(3) && map.contains(4) && map.contains(5));
+        assert(!map.contains(-1) && !map.contains(0) && !map.contains(6) && !map.contains(7));
+        assert(map.get(1) == 7 && map.get(2) == 9 && map.get(3) == 7 && map.get(4) == 3 && map.get(5) == 4);
     }
 }
 

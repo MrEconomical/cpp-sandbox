@@ -14,29 +14,64 @@ struct Item {
 };
 
 template<typename K, typename V>
+using ItemList = forward_list<Item<K, V>>;
+
+template<typename K, typename V>
 class HashMap {
-    forward_list<Item<K, V>>* buckets;
+    ItemList<K, V>* buckets;
     size_t num_buckets;
     size_t map_size;
     hash<K> hasher;
 
 public:
     HashMap(): num_buckets{DEFAULT_BUCKETS}, map_size{0} {
-        buckets = (forward_list<Item<K, V>>*) malloc(sizeof(forward_list<Item<K, V>>) * DEFAULT_BUCKETS);
+        buckets = (ItemList<K, V>*) malloc(sizeof(ItemList<K, V>) * DEFAULT_BUCKETS);
         for (size_t b = 0; b < DEFAULT_BUCKETS; b ++) {
-            new (buckets + b) forward_list<Item<K, V>>;
+            new (buckets + b) ItemList<K, V>;
         }
     }
 
     HashMap(size_t size): num_buckets{size}, map_size{0} {
-        buckets = (forward_list<Item<K, V>>*) malloc(sizeof(forward_list<Item<K, V>>) * size);
+        if (size == 0) {
+            throw std::exception("bucket count must be positive");
+        }
+        buckets = (ItemList<K, V>*) malloc(sizeof(ItemList<K, V>) * size);
         for (size_t b = 0; b < size; b ++) {
-            new (buckets + b) forward_list<Item<K, V>>;
+            new (buckets + b) ItemList<K, V>;
         }
     }
 
     size_t len() const {
         return map_size;
+    }
+
+    bool contains(const K& key) const {
+        size_t bucket = hasher(key) % num_buckets;
+        return find_item(buckets[bucket], key) != buckets[bucket].cend();
+    }
+
+    V get(const K& key) const {
+        size_t bucket = hasher(key) % num_buckets;
+        auto item = find_item(buckets[bucket], key);
+        if (item == buckets[bucket].cend()) {
+            throw std::exception("key not found");
+        }
+        return item->val;
+    }
+
+    void insert(K key, V val) {
+
+    }
+
+private:
+    typename ItemList<K, V>::const_iterator find_item(const ItemList<K, V>& bucket, const K& key) const {
+        return std::find_if(
+            bucket.cbegin(),
+            bucket.cend(),
+            [&key](const Item<K, V>& item) {
+                return item.key == key;
+            }
+        );
     }
 
     friend void test_hash_map();

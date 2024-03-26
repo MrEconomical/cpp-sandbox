@@ -47,12 +47,12 @@ public:
 
     bool contains(const K& key) const {
         size_t bucket = hasher(key) % num_buckets;
-        return find_item(buckets[bucket], key) != buckets[bucket].cend();
+        return find_item_const(buckets[bucket], key) != buckets[bucket].cend();
     }
 
     V get(const K& key) const {
         size_t bucket = hasher(key) % num_buckets;
-        auto item = find_item(buckets[bucket], key);
+        auto item = find_item_const(buckets[bucket], key);
         if (item == buckets[bucket].cend()) {
             throw std::exception("key not found");
         }
@@ -60,14 +60,30 @@ public:
     }
 
     void insert(K key, V val) {
-
+        size_t bucket = hasher(key) % num_buckets;
+        auto item = find_item(buckets[bucket], key);
+        if (item == buckets[bucket].end()) {
+            buckets[bucket].push_front(Item<K, V>{key, val});
+        } else {
+            item->val = val;
+        }
     }
 
 private:
-    typename ItemList<K, V>::const_iterator find_item(const ItemList<K, V>& bucket, const K& key) const {
+    typename ItemList<K, V>::const_iterator find_item_const(const ItemList<K, V>& bucket, const K& key) const {
         return std::find_if(
             bucket.cbegin(),
             bucket.cend(),
+            [&key](const Item<K, V>& item) {
+                return item.key == key;
+            }
+        );
+    }
+
+    typename ItemList<K, V>::iterator find_item(ItemList<K, V>& bucket, const K& key) {
+        return std::find_if(
+            bucket.begin(),
+            bucket.end(),
             [&key](const Item<K, V>& item) {
                 return item.key == key;
             }

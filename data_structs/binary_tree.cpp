@@ -23,7 +23,7 @@ public:
         return tree_size;
     }
 
-    bool find(T val) const {
+    bool find(const T& val) const {
         return tree_search(root, val);
     }
 
@@ -36,7 +36,7 @@ public:
         return tree_insert(root, val);
     }
 
-    bool remove(T val) {
+    bool remove(const T& val) {
         if (!root) {
             return false;
         }
@@ -44,7 +44,7 @@ public:
     }
 
 private:
-    bool tree_search(TreeNode<T>* node, T val) const {
+    bool tree_search(TreeNode<T>* node, const T& val) const {
         if (!node) {
             return false;
         }
@@ -70,7 +70,7 @@ private:
         return false;
     }
 
-    bool tree_remove(TreeNode<T>*& node, T val) {
+    bool tree_remove(TreeNode<T>*& node, const T& val) {
         // Check left and right subtrees for value
         if (val > node->val) {
             if (!node->right) {

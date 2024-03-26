@@ -40,7 +40,7 @@ public:
         if (!root) {
             return false;
         }
-        return tree_remove(&root, val);
+        return tree_remove(root, val);
     }
 
 private:
@@ -125,9 +125,6 @@ private:
 
 template<typename T>
 void check_tree_ordering(TreeNode<T>* node) {
-    if (!node) {
-        return;
-    }
     if (node->left) {
         assert(node->left->val < node->val);
         check_tree_ordering(node->left);
@@ -178,6 +175,32 @@ void test_binary_tree() {
     check_tree_includes(tree, {6, 2, 9, 3, 7, 4, 10});
     check_tree_excludes(tree, {0, 15});
     check_tree_ordering(tree.root);
+
+    tree.remove(6);
+    assert(tree.size() == 6);
+    check_tree_includes(tree, {2, 9, 3, 7, 4, 10});
+    check_tree_excludes(tree, {6, 0, 15});
+    check_tree_ordering(tree.root);
+
+    tree.remove(7);
+    assert(tree.size() == 5);
+    check_tree_includes(tree, {2, 9, 3, 4, 10});
+    check_tree_excludes(tree, {6, 7, 0, 15});
+    check_tree_ordering(tree.root);
+
+    tree.remove(2);
+    tree.remove(4);
+    assert(tree.size() == 3);
+    check_tree_includes(tree, {9, 3, 10});
+    check_tree_excludes(tree, {6, 2, 7, 4, 0, 15});
+    check_tree_ordering(tree.root);
+    
+    tree.remove(10);
+    tree.remove(9);
+    tree.remove(3);
+    assert(tree.size() == 0);
+    check_tree_excludes(tree, {6, 2, 9, 3, 7, 4, 10, 0, 15});
+    assert(tree.root == nullptr);
 }
 
 int main() {

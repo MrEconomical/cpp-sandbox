@@ -20,13 +20,14 @@ public:
         return tree_size;
     }
 
-    bool find(T val) {
+    bool find(T val) const {
         return tree_search(root, val);
     }
 
     bool insert(T val) {
         if (!root) {
             root = new TreeNode{val, nullptr, nullptr};
+            tree_size ++;
             return true;
         }
         return tree_insert(root, val);
@@ -40,7 +41,7 @@ public:
     }
 
 private:
-    bool tree_search(TreeNode<T>* node, T val) {
+    bool tree_search(TreeNode<T>* node, T val) const {
         if (!node) {
             return false;
         }
@@ -51,12 +52,14 @@ private:
         if (val > node->val) {
             if (!node->right) {
                 node->right = new TreeNode{val, nullptr, nullptr};
+                tree_size ++;
                 return true;
             }
             return tree_insert(node->right, val);
         } else if (val < node->val) {
             if (!node->left) {
                 node->left = new TreeNode{val, nullptr, nullptr};
+                tree_size ++;
                 return true;
             }
             return tree_insert(node->left, val);
@@ -83,12 +86,16 @@ private:
             TreeNode<T>* next = node->left;
             delete node;
             node = next;
+
+            tree_size --;
             return true;
         } else if (!node->right->left) {
             TreeNode<T>* next = node->right;
             next->left = node->left;
             delete node;
             node = next;
+
+            tree_size --;
             return true;
         }
 
@@ -105,6 +112,9 @@ private:
         next->right = node->right;
         delete node;
         node = next;
+        
+        tree_size --;
+        return true;
     }
 
     friend void test_binary_tree();

@@ -49,7 +49,9 @@ public:
     }
 
     ~Vector() {
-        free((void*) data);
+        if (capacity > 0) {
+            free((void*) data);
+        }
     }
 
     friend void test_vector();

@@ -1,20 +1,41 @@
 #include <cassert>
+#include <iostream>
 #include <vector>
 
 using std::vector;
 
 size_t lower_bound(const vector<int>& nums, int val) {
-    return 0;
+    size_t start = 0;
+    size_t end = nums.size();
+    while (start < end) {
+        size_t mid = start + (end - start) / 2;
+        if (nums[mid] >= val) {
+            end = mid;
+        } else {
+            start = mid + 1;
+        }
+    }
+    return start;
 }
 
 size_t upper_bound(const vector<int>& nums, int val) {
-    return 0;
+    size_t start = 0;
+    size_t end = nums.size();
+    while (start < end) {
+        size_t mid = start + (end - start) / 2;
+        if (nums[mid] > val) {
+            end = mid;
+        } else {
+            start = mid + 1;
+        }
+    }
+    return start;
 }
 
 int main() {
     vector<int> empty;
-    assert(lower_bound(empty, 10) == 1);
-    assert(upper_bound(empty, 10) == 1);
+    assert(lower_bound(empty, 10) == 0);
+    assert(upper_bound(empty, 10) == 0);
 
     vector<int> single{6};
     assert(lower_bound(single, 6) == 0);
@@ -59,4 +80,6 @@ int main() {
     assert(upper_bound(extreme, -20) == 0);
     assert(lower_bound(extreme, 20) == 9);
     assert(upper_bound(extreme, 20) == 9);
+
+    std::cout << "All tests passed!\n";
 }

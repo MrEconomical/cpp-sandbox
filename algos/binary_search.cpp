@@ -28,19 +28,17 @@ int main() {
     assert(lower_bound(odd_len, 3) == 0);
     assert(upper_bound(odd_len, 3) == 5);
 
+    vector<int> unique{-2, 5, 6, 8, 12, 15, 17};
+    assert(lower_bound(unique, 5) == 1);
+    assert(upper_bound(unique, 5) == 2);
+    assert(lower_bound(unique, 12) == 4);
+    assert(upper_bound(unique, 12) == 5);
+
     vector<int> bounds{1, 6, 6, 7, 9};
     assert(lower_bound(bounds, 1) == 0);
     assert(upper_bound(bounds, 1) == 1);
     assert(lower_bound(bounds, 9) == 4);
     assert(upper_bound(bounds, 9) == 5);
-
-    vector<int> unique{-2, 5, 6, 8, 12, 15, 17};
-    assert(lower_bound(unique, -5) == 0);
-    assert(upper_bound(unique, -5) == 0);
-    assert(lower_bound(unique, 12) == 4);
-    assert(upper_bound(unique, 12) == 5);
-    assert(lower_bound(unique, 20) == 8);
-    assert(upper_bound(unique, 20) == 8);
 
     vector<int> duplicate{4, 4, 8, 10, 10, 10, 15, 15, 15, 15};
     assert(lower_bound(duplicate, 4) == 0);
@@ -49,4 +47,16 @@ int main() {
     assert(upper_bound(duplicate, 10) == 6);
     assert(lower_bound(duplicate, 15) == 6);
     assert(upper_bound(duplicate, 15) == 10);
+
+    vector<int> missing{-3, -1, 0, 4, 4, 4, 5, 10, 10, 11};
+    assert(lower_bound(missing, 6) == 7);
+    assert(upper_bound(missing, 6) == 7);
+    assert(lower_bound(missing, 9) == 7);
+    assert(upper_bound(missing, 9) == 7);
+
+    vector<int> extreme{-7, -7, -2, 4, 5, 5, 8, 12, 14};
+    assert(lower_bound(extreme, -20) == 0);
+    assert(upper_bound(extreme, -20) == 0);
+    assert(lower_bound(extreme, 20) == 9);
+    assert(upper_bound(extreme, 20) == 9);
 }

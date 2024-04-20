@@ -9,10 +9,10 @@ size_t lower_bound(const vector<int>& nums, int val) {
     size_t end = nums.size();
     while (start < end) {
         size_t mid = start + (end - start) / 2;
-        if (nums[mid] >= val) {
-            end = mid;
-        } else {
+        if (nums[mid] < val) {
             start = mid + 1;
+        } else {
+            end = mid;
         }
     }
     return start;
@@ -23,10 +23,10 @@ size_t upper_bound(const vector<int>& nums, int val) {
     size_t end = nums.size();
     while (start < end) {
         size_t mid = start + (end - start) / 2;
-        if (nums[mid] > val) {
-            end = mid;
-        } else {
+        if (nums[mid] <= val) {
             start = mid + 1;
+        } else {
+            end = mid;
         }
     }
     return start;
